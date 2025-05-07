@@ -1,0 +1,126 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background);
+}
+
+/* Top bar */
+.top-bar {
+  height: 7%;
+  background-color: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-shadow: var(--shadow-sm);
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--primary);
+}
+
+.logo svg {
+  stroke: var(--primary);
+}
+
+.logo h2 {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.top-nav {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  background-color: transparent;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.nav-button:hover {
+  background-color: var(--background);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.nav-button span {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Main content area: horizontal layout */
+.content-area {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: 93%;
+}
+
+/* Left side */
+.left-panel {
+  width: 30%;
+  background-color: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+/* Right side */
+.right-panel {
+  width: 70%;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+  background-color: var(--background);
+}
+
+/* Upload section */
+.upload-section {
+  flex: 1;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  padding: 20px;
+  position: relative;
+  border: 1px solid var(--border);
+  height: 50%;
+}
+
+/* Timeline section */
+.timeline-section {
+  height: 50%;
+  border-radius: var(--radius-md);
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
