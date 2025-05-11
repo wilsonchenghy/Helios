@@ -1,14 +1,7 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 .main-container {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--background);
 }
 
 /* Top bar */
@@ -29,10 +22,6 @@
   align-items: center;
   gap: 12px;
   color: var(--primary);
-}
-
-.logo svg {
-  stroke: var(--primary);
 }
 
 .logo h2 {
@@ -95,7 +84,7 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   overflow: hidden;
   background-color: var(--background);
 }
@@ -110,8 +99,7 @@
   justify-content: center;
   align-items: center;
   overflow: auto;
-  padding: 20px;
-  position: relative;
+  padding: 5px;
   border: 1px solid var(--border);
   height: 50%;
 }
