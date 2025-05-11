@@ -190,8 +190,24 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
     }
   };
 
+  const renderPlaceholder = () => {
+    if (isLoading) return null;
+    
+    if ((visibleGrid === 'imageGrid' && images.length === 0) || 
+        (visibleGrid === 'videoGrid' && videos.length === 0) || 
+        (visibleGrid === 'soundtrackGrid' && soundtracks.length === 0)) {
+      return (
+        <div className="search-placeholder">
+          <p>Start searching to find {mediaType === 'image' ? 'images' : mediaType === 'video' ? 'videos' : 'audio'}...</p>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
   return (
-    <div>
+    <div className="stock-media-container">
       <div className="MediaBox">
         {renderSearchInput()}
       </div>
@@ -201,9 +217,11 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
           <div className="spinner"></div>
         </div>
       )}
+      
+      {renderPlaceholder()}
 
       <div className={visibleGrid === 'imageGrid' ? 'imageGrid' : 'hidden'}>
-        {images.length > 0 ? (
+        {images.length > 0 && 
           images.map((image) => (
             <img
               key={image.id}
@@ -213,13 +231,11 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
               onDoubleClick={() => addImageToPreviewer(image.src.medium)}
             />
           ))
-        ) : (
-          !isLoading && imageQuery && <p className="no-results">No images found. Try a different search term.</p>
-        )}
+        }
       </div>
 
       <div className={visibleGrid === 'videoGrid' ? 'videoGrid' : 'hidden'}>
-        {videos.length > 0 ? (
+        {videos.length > 0 && 
           videos.map((video) => (
             <ReactPlayer
               key={video.id}
@@ -237,13 +253,11 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
               }}
             />
           ))
-        ) : (
-          !isLoading && videoQuery && <p className="no-results">No videos found. Try a different search term.</p>
-        )}
+        }
       </div>
 
       <div className={visibleGrid === 'soundtrackGrid' ? 'soundtrackGrid' : 'hidden'}>
-        {soundtracks.length > 0 ? (
+        {soundtracks.length > 0 && 
           soundtracks.map((soundtrack) => (
             <div key={soundtrack.id} className="soundtrackItem">
               <audio controls>
@@ -252,9 +266,7 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
               </audio>
             </div>
           ))
-        ) : (
-          !isLoading && soundtrackQuery && <p className="no-results">No audio found. Try a different search term.</p>
-        )}
+        }
       </div>
     </div>
   );
