@@ -9,7 +9,7 @@ import {
   setPreviewerLoadingAction,
 } from '../redux/actions.js';
 
-const StockMediaBox = () => {
+const StockMediaBox = ({ mediaType = 'image' }) => {
   const [imageQuery, setImageQuery] = useState('');
   const [videoQuery, setVideoQuery] = useState('');
   const [soundtrackQuery, setSoundtrackQuery] = useState('');
@@ -24,6 +24,33 @@ const StockMediaBox = () => {
   const baseURL = 'http://127.0.0.1:5001';
 
   const dispatch = useDispatch();
+
+  // Update visible grid when mediaType changes
+  useEffect(() => {
+    if (mediaType === 'image') {
+      setVisibleGrid('imageGrid');
+      if (images.length === 0 && imageQuery) {
+        fetchImages();
+      }
+    } else if (mediaType === 'video') {
+      setVisibleGrid('videoGrid');
+      if (videos.length === 0 && videoQuery) {
+        fetchVideos();
+      }
+    } else if (mediaType === 'audio') {
+      setVisibleGrid('soundtrackGrid');
+      if (soundtracks.length === 0 && soundtrackQuery) {
+        fetchSoundtracks();
+      }
+    }
+  }, [mediaType]);
+
+  // Handle key press for search input
+  const handleKeyPress = (e, searchFunction) => {
+    if (e.key === 'Enter') {
+      searchFunction();
+    }
+  };
 
   const handleSearchImageButtonClick = () => {
     setVisibleGrid('imageGrid');
@@ -41,6 +68,7 @@ const StockMediaBox = () => {
   };
 
   const fetchImages = async () => {
+    if (!imageQuery.trim()) return;
     setIsLoading(true);
     try {
       const response = await axios.get(`${baseURL}/proxy/pexels/images?query=${imageQuery}&per_page=10`);
@@ -53,6 +81,7 @@ const StockMediaBox = () => {
   };
 
   const fetchVideos = async () => {
+    if (!videoQuery.trim()) return;
     setIsLoading(true);
     try {
       const response = await axios.get(`${baseURL}/proxy/pexels/videos?query=${videoQuery}&per_page=10`);
@@ -65,6 +94,7 @@ const StockMediaBox = () => {
   };
 
   const fetchSoundtracks = async () => {
+    if (!soundtrackQuery.trim()) return;
     setIsLoading(true);
     try {
       const response = await axios.get(`${baseURL}/proxy/jamendo/tracks?namesearch=${soundtrackQuery}&limit=10`);
@@ -101,50 +131,69 @@ const StockMediaBox = () => {
     dispatch(setMediaTypeAction('video'));
   };
 
+  // Render appropriate search input based on mediaType
+  const renderSearchInput = () => {
+    switch (mediaType) {
+      case 'image':
+        return (
+          <div className="input-container">
+            <input
+              id="imageSearchQuery"
+              className="inputbox"
+              type="text"
+              value={imageQuery}
+              onChange={(e) => setImageQuery(e.target.value)}
+              onKeyPress={(e) => handleKeyPress(e, handleSearchImageButtonClick)}
+              placeholder="Search for images..."
+            />
+            <button className="button-4 search" onClick={handleSearchImageButtonClick}>
+              Search
+            </button>
+          </div>
+        );
+      case 'video':
+        return (
+          <div className="input-container">
+            <input
+              id="videoSearchQuery"
+              className="inputbox"
+              type="text"
+              value={videoQuery}
+              onChange={(e) => setVideoQuery(e.target.value)}
+              onKeyPress={(e) => handleKeyPress(e, handleSearchVideoButtonClick)}
+              placeholder="Search for videos..."
+            />
+            <button className="button-4 search" onClick={handleSearchVideoButtonClick}>
+              Search
+            </button>
+          </div>
+        );
+      case 'audio':
+        return (
+          <div className="input-container">
+            <input
+              id="soundtrackSearchQuery"
+              className="inputbox"
+              type="text"
+              value={soundtrackQuery}
+              onChange={(e) => setSoundtrackQuery(e.target.value)}
+              onKeyPress={(e) => handleKeyPress(e, handleSongsButtonClick)}
+              placeholder="Search for audio..."
+            />
+            <button className="button-4 search" onClick={handleSongsButtonClick}>
+              Search
+            </button>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div>
       <div className="MediaBox">
-        <div className="input-container">
-          <input
-            id="imageSearchQuery"
-            className="inputbox"
-            type="text"
-            value={imageQuery}
-            onChange={(e) => setImageQuery(e.target.value)}
-            placeholder="Search Images"
-          />
-          <button className="button-4 search" onClick={handleSearchImageButtonClick}>
-            Search Images
-          </button>
-        </div>
-
-        <div className="input-container">
-          <input
-            id="videoSearchQuery"
-            className="inputbox"
-            type="text"
-            value={videoQuery}
-            onChange={(e) => setVideoQuery(e.target.value)}
-            placeholder="Search Videos"
-          />
-          <button className="button-4 search" onClick={handleSearchVideoButtonClick}>
-            Search Videos
-          </button>
-        </div>
-
-        <div className="input-container">
-          <input
-            id="soundtrackSearchQuery"
-            className="inputbox"
-            type="text"
-            value={soundtrackQuery}
-            onChange={(e) => setSoundtrackQuery(e.target.value)}
-            placeholder="Search Soundtracks"
-          />
-          <button className="button-4 search" onClick={handleSongsButtonClick}>
-            Search Soundtrack
-          </button>
-        </div>
+        {renderSearchInput()}
       </div>
 
       {isLoading && (
@@ -154,46 +203,58 @@ const StockMediaBox = () => {
       )}
 
       <div className={visibleGrid === 'imageGrid' ? 'imageGrid' : 'hidden'}>
-        {images.map((image) => (
-          <img
-            key={image.id}
-            src={image.src.medium}
-            alt={image.photographer}
-            className="stockImages"
-            onDoubleClick={() => addImageToPreviewer(image.src.medium)}
-          />
-        ))}
+        {images.length > 0 ? (
+          images.map((image) => (
+            <img
+              key={image.id}
+              src={image.src.medium}
+              alt={image.photographer}
+              className="stockImages"
+              onDoubleClick={() => addImageToPreviewer(image.src.medium)}
+            />
+          ))
+        ) : (
+          !isLoading && imageQuery && <p className="no-results">No images found. Try a different search term.</p>
+        )}
       </div>
 
       <div className={visibleGrid === 'videoGrid' ? 'videoGrid' : 'hidden'}>
-        {videos.map((video) => (
-          <ReactPlayer
-            key={video.id}
-            url={video.video_files[0].link}
-            controls
-            className="stockVideos"
-            onClick={(e) => addVideoToPreviewer(e, video.video_files[0].link)}
-            onDoubleClick={(e) => e.preventDefault()}
-            config={{
-              file: {
-                attributes: {
-                  onDoubleClick: (e) => e.preventDefault(),
+        {videos.length > 0 ? (
+          videos.map((video) => (
+            <ReactPlayer
+              key={video.id}
+              url={video.video_files[0].link}
+              controls
+              className="stockVideos"
+              onClick={(e) => addVideoToPreviewer(e, video.video_files[0].link)}
+              onDoubleClick={(e) => e.preventDefault()}
+              config={{
+                file: {
+                  attributes: {
+                    onDoubleClick: (e) => e.preventDefault(),
+                  },
                 },
-              },
-            }}
-          />
-        ))}
+              }}
+            />
+          ))
+        ) : (
+          !isLoading && videoQuery && <p className="no-results">No videos found. Try a different search term.</p>
+        )}
       </div>
 
       <div className={visibleGrid === 'soundtrackGrid' ? 'soundtrackGrid' : 'hidden'}>
-        {soundtracks.map((soundtrack) => (
-          <div key={soundtrack.id} className="soundtrackItem">
-            <audio controls>
-              <source src={soundtrack.audio} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-          </div>
-        ))}
+        {soundtracks.length > 0 ? (
+          soundtracks.map((soundtrack) => (
+            <div key={soundtrack.id} className="soundtrackItem">
+              <audio controls>
+                <source src={soundtrack.audio} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          ))
+        ) : (
+          !isLoading && soundtrackQuery && <p className="no-results">No audio found. Try a different search term.</p>
+        )}
       </div>
     </div>
   );

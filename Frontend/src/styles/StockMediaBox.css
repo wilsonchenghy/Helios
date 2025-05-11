@@ -1,103 +1,158 @@
+.MediaBox {
+  padding: 0;
+  margin-bottom: 16px;
+}
+
 .MediaBox .input-container {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin: 30px auto;
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 16px;
+}
+
+.MediaBox .inputbox {
+  width: 100%;
+  padding: 10px 110px 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-primary);
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+  font-size: 0.9375rem;
+  transition: all 0.2s ease;
+}
+
+.MediaBox .inputbox:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.MediaBox .button-4.search {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  padding: 0 16px;
+  border: none;
+  background-color: var(--primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  transition: background-color 0.15s ease;
+}
+
+.MediaBox .button-4.search:hover {
+  background-color: var(--primary-dark);
+}
+
+.imageGrid,
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-gap: 12px;
+  margin-top: 8px;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  padding: 8px 4px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.soundtrackGrid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  margin-top: 8px;
+  padding: 8px 4px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.stockImages,
+.stockVideos {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  object-fit: cover;
+  width: 100%;
+  height: 150px;
+  cursor: pointer;
+}
+
+.stockImages:hover,
+.stockVideos:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.soundtrackItem {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.soundtrackItem:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.soundtrackItem audio {
+  width: 100%;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 0.8s ease-in-out infinite;
+}
+
+.no-results {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 40px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .MediaBox .inputbox {
-    width: 100%;
-    padding: 10px 50px 10px 20px;
-    border: 2px solid rgba(255, 255, 255, 0.136);
-    border-radius: 35px;
-    background: rgba(255, 255, 255, 0.2);
-    box-sizing: border-box;
-    box-shadow: -4px -1px 15px rgba(0, 0, 0, 0.076);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .MediaBox .button-4.search {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    padding: 0 20px;
-    border: none;
-    background-color: #5cd0e4;
-    border-radius: 0 35px 35px 0;
-    cursor: pointer;
-    font-size: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  to {
+    opacity: 1;
   }
-  
-  .MediaBox .button-4.search:hover {
-    background-color: #2874a1;
-  }
-  
-  .imageGrid,
-  .videoGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    grid-gap: 10px;
-    margin-top: 20px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 10px;
-    animation: fadeIn 0.3s ease-in;
-  }
-  
-  .soundtrackGrid {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    max-height: 400px;
-    overflow-y: auto;
-    margin-top: 20px;
-    padding: 10px;
-    animation: fadeIn 0.3s ease-in;
-  }
-  
-  .stockImages,
-  .stockVideos {
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: 10px;
-  }
-  
-  .loading-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-  }
-  
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    border-top-color: #5cd0e4;
-    animation: spin 1s ease-in-out infinite;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  .hidden {
-    display: none;
-  }
+}
+
+.hidden {
+  display: none;
+}
   
