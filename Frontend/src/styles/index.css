@@ -3,12 +3,13 @@
 
 :root {
   --primary: #21aeb3;
-  --primary-light: #3b82f6;
+  --primary-light: #25a3a7;
   --primary-dark: #1a9195;
   --secondary: #10b981;
   --accent: #8b5cf6;
   --background: #f8fafc;
   --surface: #ffffff;
+  --previewer-bg: #f1f5f9;
   --text-primary: #1e293b;
   --text-secondary: #64748b;
   --border: #e2e8f0;
@@ -21,6 +22,27 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark theme variables */
+[data-theme='dark'] {
+  --primary: #1fa3a8;
+  --primary-light: #25a3a7;
+  --primary-dark: #1c9094;
+  --secondary: #22c55e;
+  --accent: #a78bfa;
+  --background: #1a1a1a;
+  --surface: #242424;
+  --previewer-bg: #121212;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border: #404040;
+  --error: #f87171;
+  --warning: #fbbf24;
+  --success: #34d399;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -36,6 +58,7 @@ body {
   color: var(--text-primary);
   line-height: 1.5;
   font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 button, input, select, textarea {

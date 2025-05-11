@@ -1,7 +1,8 @@
 import UserTab from './UserTab';
 import MediaPreviewer from './MediaPreviewer';
 import TimelineEditor from './TimelineEditor';
-import { Upload, HelpCircle } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
+import { Upload } from 'lucide-react';
 import '../styles/MainPage.css';
 
 const MainPage = () => {
@@ -16,10 +17,7 @@ const MainPage = () => {
             <Upload size={18} />
             <span>Export</span>
           </button>
-          <button className="nav-button">
-            <HelpCircle size={18} />
-            <span>Help</span>
-          </button>
+          <ThemeToggle />
         </div>
       </header>
 

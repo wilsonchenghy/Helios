@@ -25,8 +25,8 @@ const UserTab = () => {
             onChange={handleSelectChange}
             className="tab-dropdown"
           >
-            <option value="stockMedia">🔍 Stock Media</option>
-            <option value="aiCommand">💫 AI Command</option>
+            <option value="stockMedia">Import Media</option>
+            <option value="aiCommand">AI Chat</option>
           </select>
         </div>
         

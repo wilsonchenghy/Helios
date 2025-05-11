@@ -92,7 +92,7 @@
 /* Upload section */
 .upload-section {
   flex: 1;
-  background-color: var(--surface);
+  background-color: var(--previewer-bg);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   display: flex;
