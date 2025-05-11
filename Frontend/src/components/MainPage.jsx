@@ -2,7 +2,7 @@ import UserTab from './UserTab';
 import MediaPreviewer from './MediaPreviewer';
 import TimelineEditor from './TimelineEditor';
 import ThemeToggle from './ThemeToggle';
-import { Upload } from 'lucide-react';
+import { Upload, Save } from 'lucide-react';
 import '../styles/MainPage.css';
 
 const MainPage = () => {
@@ -13,6 +13,10 @@ const MainPage = () => {
           <h2>Helios</h2>
         </div>
         <div className="top-nav">
+          <button className="nav-button">
+            <Save size={18} />
+            <span>Save</span>
+          </button>
           <button className="nav-button">
             <Upload size={18} />
             <span>Export</span>

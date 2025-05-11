@@ -33,19 +33,24 @@
 
 .top-nav {
   display: flex;
-  gap: 12px;
+  gap: 2px;
+  align-items: center;
 }
 
 .nav-button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 8px 2px;
+  min-width: 90px;
+  height: 38px;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   background-color: transparent;
   transition: all 0.2s ease;
   border: 1px solid transparent;
+  cursor: pointer;
 }
 
 .nav-button:hover {

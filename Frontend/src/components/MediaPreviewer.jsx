@@ -115,26 +115,16 @@ const MediaPreviewer = ({timelineData, timelineAddAction}) => {
                 )}
             </div>
 
-            {/* !!! ISSUE Later on have to decide whether to show the video with ReactPlayer or with just the HTML video element */}
-            {/* {mediaUrl && mediaType == 'video' && (
-                <ReactPlayer
-                    url={mediaUrl}
-                    controls={true}
-                    width="100%"
-                    height="auto"
-                    onDuration={getDuration}
-                />
-            )} */}
-
             {mediaUrl && mediaType === 'video' && (
-                <ReactPlayer
-                    url={mediaUrl}
-                    controls={false}
-                    width="0"
-                    height="0"
-                    style={{ display: 'none' }}
-                    onDuration={getDuration}
-                />
+                <div className="video-preview-container">
+                    <ReactPlayer
+                        url={mediaUrl}
+                        controls={true}
+                        width="100%"
+                        height="auto"
+                        onDuration={getDuration}
+                    />
+                </div>
             )}
 
             {/* In order to call getDuration even though I don't need the audio component to be rendered, I still create the react player component but set it to be non visible on the UI */}
