@@ -19,6 +19,13 @@ class VideoControl {
       video.autoplay = false;
       video.width = 500;
       video.height = 500;
+      video.style.maxWidth = '90%';
+      video.style.maxHeight = '90%';
+      video.style.position = 'absolute';
+      video.style.top = '50%';
+      video.style.left = '50%';
+      video.style.transform = 'translate(-50%, -50%)';
+      video.style.objectFit = 'contain';
       this.cacheMap[id] = { video, src };
 
       ground.appendChild(video);
@@ -39,6 +46,13 @@ class VideoControl {
       video.autoplay = true;
       video.width = 500;
       video.height = 500;
+      video.style.maxWidth = '90%';
+      video.style.maxHeight = '90%';
+      video.style.position = 'absolute';
+      video.style.top = '50%';
+      video.style.left = '50%';
+      video.style.transform = 'translate(-50%, -50%)';
+      video.style.objectFit = 'contain';
       this.cacheMap[id] = { video, src };
 
       ground.appendChild(video);

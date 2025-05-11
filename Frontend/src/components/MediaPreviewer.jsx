@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { previewMediaAction, setMediaTypeAction } from '../redux/actions';
 import { Film, Headphones, Upload } from 'lucide-react';
+import videoControl from '../utils/videoControl';
 import '../styles/MediaPreviewer.css';
 
 const MediaPreviewer = ({timelineData, timelineAddAction}) => {
@@ -70,6 +71,11 @@ const MediaPreviewer = ({timelineData, timelineAddAction}) => {
     useEffect(() => {
         if (durationTimelineData != null) {
             handleTimelineAddData(mediaUrl, mediaType);
+            
+            // Manually use videoControl to show preview if it's a video
+            if (mediaType === 'video') {
+                videoControl.enter({ id: mediaUrl, src: mediaUrl });
+            }
         }
     }, [durationTimelineData]);
 
@@ -119,9 +125,10 @@ const MediaPreviewer = ({timelineData, timelineAddAction}) => {
                 <div className="video-preview-container">
                     <ReactPlayer
                         url={mediaUrl}
-                        controls={true}
-                        width="100%"
-                        height="auto"
+                        controls={false}
+                        width="0"
+                        height="0"
+                        style={{ display: 'none' }}
                         onDuration={getDuration}
                     />
                 </div>
