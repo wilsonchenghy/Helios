@@ -4,12 +4,14 @@ import TimelineEditor from './TimelineEditor';
 import ThemeToggle from './ThemeToggle';
 import { Upload, Save } from 'lucide-react';
 import '../styles/MainPage.css';
+import logo from '../assets/logo.png';
 
 const MainPage = () => {
   return (
     <div className="main-container">
       <header className="top-bar">
         <div className="logo">
+          <img src={logo} alt="Helios Logo" className="logo-img" />
           <h2>Helios</h2>
         </div>
         <div className="top-nav">

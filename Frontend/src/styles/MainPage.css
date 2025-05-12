@@ -24,6 +24,11 @@
   color: var(--primary);
 }
 
+.logo-img {
+  height: 28px;
+  width: auto;
+}
+
 .logo h2 {
   font-weight: 600;
   color: var(--text-primary);
