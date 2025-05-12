@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Play, Pause, ZoomIn, ZoomOut } from 'lucide-react';
+import { Play, Pause, ZoomIn, ZoomOut, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { timelineDeleteAction, timelineMoveMediaAction } from '../redux/actions';
 import '../styles/TimelinePlayerBar.css'
 
 
@@ -11,6 +13,10 @@ const TimelinePlayerBar = ({ timelineState, autoScrollWhenPlay, scale, setScale 
   const [isPlaying, setIsPlaying] = useState(false);
   const [time, setPlayingTime] = useState(0);
   const [activeSpeed, setActiveSpeed] = useState(1.0);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
+  const dispatch = useDispatch();
+  const timelineData = useSelector(state => state.timeline.timelineData);
 
 
   // Control Play or pause
@@ -73,8 +79,8 @@ const TimelinePlayerBar = ({ timelineState, autoScrollWhenPlay, scale, setScale 
 
       const scaleWidth = 160;
       const offset = 800;
-      // ISSUE !!!! There is an issue below where the scale variable is always at its initial value and don't change according to what scale actually is at any moment in time  // We need the variable to change in order for the autoscrolling to work at any scale
-      const cursorPosition = time * (scaleWidth / scale) - offset;  // relative to autoScrollWhenPlay point  // May have to be changed later
+      // Use current scale value from props instead of the initial value
+      const cursorPosition = time * (scaleWidth / scale) - offset;  // relative to autoScrollWhenPlay point
 
       if (cursorPosition >= 0 && autoScrollWhenPlay) {
         timelineState.current.setScrollLeft(cursorPosition);
@@ -86,9 +92,145 @@ const TimelinePlayerBar = ({ timelineState, autoScrollWhenPlay, scale, setScale 
       timelineCurrentState.pause();
       timelineCurrentState.listener.offAll();
     };
-  }, [timelineState]);
+  }, [timelineState, scale, autoScrollWhenPlay]); // Add scale to dependency array
 
 
+  // Delete current media being played
+  const deleteCurrentMedia = () => {
+    if (!timelineState.current || timelineData.length === 0) {
+      setShowDeleteModal(false);
+      return;
+    }
+    
+    // Find the current media being played based on time
+    const currentTime = time;
+    
+    // Find which item in the timeline is currently active
+    const currentItem = timelineData.find(item => {
+      return item.actions.some(action => 
+        currentTime >= action.start && currentTime <= action.end
+      );
+    });
+    
+    if (currentItem) {
+      dispatch(timelineDeleteAction(currentItem.id));
+      timelineState.current.pause();
+      setPlayingTime(0);
+      setShowDeleteModal(false);
+    } else {
+      // No media found at current time
+      setShowDeleteModal(false);
+    }
+  };
+  
+  // Check if there's media at the current timeline position
+  const isMediaAtCurrentTime = () => {
+    if (timelineData.length === 0) return false;
+    
+    return timelineData.some(item => 
+      item.actions.some(action => 
+        time >= action.start && time <= action.end
+      )
+    );
+  };
+  
+  // Get the current media id based on time
+  const getCurrentMediaId = () => {
+    if (timelineData.length === 0) return null;
+    
+    const currentItem = timelineData.find(item => 
+      item.actions.some(action => 
+        time >= action.start && time <= action.end
+      )
+    );
+    
+    return currentItem ? currentItem.id : null;
+  };
+  
+  // Get the current bar position (the id)
+  const getCurrentBarPosition = () => {
+    const mediaId = getCurrentMediaId();
+    return mediaId ? parseInt(mediaId) : null;
+  };
+
+  // Handle delete button click
+  const handleDeleteClick = () => {
+    if (isMediaAtCurrentTime()) {
+      setShowDeleteModal(true);
+    }
+  };
+
+  // Check if moving the current media would leave its track empty
+  const wouldLeaveTrackEmpty = () => {
+    const currentPos = getCurrentBarPosition();
+    if (currentPos === null) return false;
+    
+    // Find the current item
+    const currentItem = timelineData.find(item => item.id === getCurrentMediaId());
+    if (!currentItem) return false;
+    
+    // Count actions for the current track at current time
+    const actionsAtCurrentTime = currentItem.actions.filter(action => 
+      time >= action.start && time <= action.end
+    );
+    
+    // If there's only one action at this time and it's the only action in the track
+    return actionsAtCurrentTime.length === 1 && currentItem.actions.length === 1;
+  };
+
+  // Check if we can move up (to position with lower id number)
+  const canMoveUp = () => {
+    const currentPos = getCurrentBarPosition();
+    if (currentPos === null || currentPos === 0) return false;
+    
+    // Get all occupied timeline positions
+    const occupiedPositions = timelineData.map(item => parseInt(item.id))
+      .sort((a, b) => a - b);
+    
+    // Check if position above is available (either position 0 or an occupied position)
+    const targetPos = currentPos - 1;
+    return targetPos === 0 || occupiedPositions.includes(targetPos);
+  };
+
+  // Check if we can move down (to position with higher id number)
+  const canMoveDown = () => {
+    // Can't move down if it would leave an empty track
+    if (wouldLeaveTrackEmpty()) return false;
+    
+    const currentPos = getCurrentBarPosition();
+    if (currentPos === null) return false;
+    
+    // Always allow moving to the next consecutive position
+    return true;
+  };
+
+  // Move media up
+  const moveMediaUp = () => {
+    if (!canMoveUp() || !isMediaAtCurrentTime()) return;
+    
+    const currentId = getCurrentMediaId();
+    const currentPos = getCurrentBarPosition();
+    
+    if (currentId && currentPos !== null) {
+      dispatch(timelineMoveMediaAction(currentId, currentPos - 1));
+      timelineState.current.pause();
+      setPlayingTime(0);
+    }
+  };
+
+  // Move media down
+  const moveMediaDown = () => {
+    if (!canMoveDown() || !isMediaAtCurrentTime()) return;
+    
+    const currentId = getCurrentMediaId();
+    const currentPos = getCurrentBarPosition();
+    
+    if (currentId && currentPos !== null) {
+      dispatch(timelineMoveMediaAction(currentId, currentPos + 1));
+      timelineState.current.pause();
+      setPlayingTime(0);
+    }
+  };
 
   return (
     <div className="timelinePlayerBar">
@@ -101,6 +243,30 @@ const TimelinePlayerBar = ({ timelineState, autoScrollWhenPlay, scale, setScale 
           )}
         </button>
         <div className="displayTime">{playingTimeDisplay(time)}</div>
+        <button 
+          className={`deleteButton ${isMediaAtCurrentTime() ? '' : 'disabled'}`} 
+          onClick={handleDeleteClick}
+          title="Delete Current Media"
+          disabled={!isMediaAtCurrentTime()}
+        >
+          <Trash2 size={16} />
+        </button>
+        <button 
+          className={`moveUpButton ${canMoveUp() && isMediaAtCurrentTime() ? '' : 'disabled'}`} 
+          onClick={moveMediaUp}
+          title="Move Current Media Up"
+          disabled={!canMoveUp() || !isMediaAtCurrentTime()}
+        >
+          <ArrowUp size={16} />
+        </button>
+        <button 
+          className={`moveDownButton ${canMoveDown() && isMediaAtCurrentTime() ? '' : 'disabled'}`} 
+          onClick={moveMediaDown}
+          title="Move Current Media Down"
+          disabled={!canMoveDown() || !isMediaAtCurrentTime()}
+        >
+          <ArrowDown size={16} />
+        </button>
       </div>
       
       <div className="playerRightControls">
@@ -133,6 +299,18 @@ const TimelinePlayerBar = ({ timelineState, autoScrollWhenPlay, scale, setScale 
           ))}
         </div>
       </div>
+      
+      {showDeleteModal && (
+        <div className="deleteModal">
+          <div className="deleteModalContent">
+            <p>Delete current media from the timeline?</p>
+            <div className="deleteModalButtons">
+              <button onClick={() => setShowDeleteModal(false)}>Cancel</button>
+              <button onClick={deleteCurrentMedia} className="confirmDelete">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

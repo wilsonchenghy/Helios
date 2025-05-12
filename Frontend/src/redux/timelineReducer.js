@@ -105,6 +105,78 @@ const timelineReducer = (state = initialState, action) => {
                 ...state,
                 timelineData: [...state.timelineData, action.payload],
             }
+        case 'TIMELINE_DELETE_ACTION':
+            return {
+                ...state,
+                timelineData: state.timelineData.filter(item => item.id !== action.payload.id),
+            }
+        case 'TIMELINE_MOVE_MEDIA_ACTION': {
+            const { id, targetPosition } = action.payload;
+            
+            // Find the index of the item to move
+            const itemIndex = state.timelineData.findIndex(item => item.id === id);
+            if (itemIndex === -1) return state;
+            
+            // Create a copy of the item to move
+            const itemToMove = { ...state.timelineData[itemIndex] };
+            
+            // Get the target bar's items
+            const targetBarItems = state.timelineData.filter(item => 
+                parseInt(item.id) === targetPosition
+            );
+            
+            // If target bar has media, we need to concatenate the actions
+            if (targetBarItems.length > 0) {
+                // Find the last end time in the target bar
+                const lastEndTime = Math.max(
+                    ...targetBarItems.flatMap(item => 
+                        item.actions.map(action => action.end)
+                    )
+                );
+                
+                // Create adjusted actions with new timing
+                const adjustedActions = itemToMove.actions.map(action => {
+                    const duration = action.end - action.start;
+                    return {
+                        ...action,
+                        start: lastEndTime,
+                        end: lastEndTime + duration
+                    };
+                });
+                
+                // Add the adjusted actions to the target bar's first item
+                const updatedTargetItem = {
+                    ...targetBarItems[0],
+                    actions: [...targetBarItems[0].actions, ...adjustedActions]
+                };
+                
+                // Create the updated timeline data
+                const updatedTimelineData = state.timelineData
+                    .filter(item => item.id !== id && parseInt(item.id) !== targetPosition)
+                    .concat(updatedTargetItem);
+                
+                return {
+                    ...state,
+                    timelineData: updatedTimelineData
+                };
+            } else {
+                // If target bar is empty, simply update the id
+                const updatedItem = {
+                    ...itemToMove,
+                    id: targetPosition.toString()
+                };
+                
+                // Create the updated timeline data
+                const updatedTimelineData = state.timelineData
+                    .filter(item => item.id !== id)
+                    .concat(updatedItem);
+                
+                return {
+                    ...state,
+                    timelineData: updatedTimelineData
+                };
+            }
+        }
         default:
             return state;
     }
