@@ -1,12 +1,18 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import subprocess
 import os
+import time
 from langchain_openai import ChatOpenAI
 import requests
 
 app = Flask(__name__)
 CORS(app)
+
+# Create static folders if they don't exist
+STATIC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+VIDEO_FOLDER = os.path.join(STATIC_FOLDER, 'videos')
+os.makedirs(VIDEO_FOLDER, exist_ok=True)
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 PEXELS_API_KEY = os.getenv('VITE_PEXELS_API_KEY')
@@ -14,11 +20,16 @@ JAMENDO_CLIENT_ID = os.getenv('VITE_JAMENDO_CLIENT_ID')
 
 def generate_video_from_image(image_path, duration):
     try:
+        # Generate a unique filename based on timestamp
+        timestamp = int(time.time())
+        output_filename = f'image_video_{timestamp}.mp4'
+        output_path = os.path.join(VIDEO_FOLDER, output_filename)
+        
         subprocess.run([
             'ffmpeg', '-loop', '1', '-i', image_path,
-            '-c:v', 'libx264', '-preset', 'ultrafast', '-t', str(duration), 'output.mp4'
+            '-c:v', 'libx264', '-preset', 'ultrafast', '-t', str(duration), output_path
         ])
-        return 'output.mp4'
+        return output_filename
     except Exception as e:
         print('Error generating video:', e)
         return None
@@ -31,11 +42,15 @@ def handle_generate_video():
     if not image_path or not duration:
         return 'Missing imagePath or duration', 400
 
-    video_path = generate_video_from_image(image_path, duration)
-    if video_path:
-        return video_path
+    video_filename = generate_video_from_image(image_path, duration)
+    if video_filename:
+        return f'static/videos/{video_filename}'
     else:
         return 'Failed to generate video', 500
+
+@app.route('/static/videos/<filename>', methods=['GET'])
+def serve_video(filename):
+    return send_from_directory(VIDEO_FOLDER, filename)
     
 @app.route('/AI_Command_Box', methods=['POST'])
 def generate_response():

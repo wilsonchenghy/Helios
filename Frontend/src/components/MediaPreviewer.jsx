@@ -135,7 +135,6 @@ const MediaPreviewer = ({timelineData, timelineAddAction}) => {
             )}
 
             {/* In order to call getDuration even though I don't need the audio component to be rendered, I still create the react player component but set it to be non visible on the UI */}
-            {/* !!! ISSUE Due to the component being non visible but users should still be notified once the audio is sucessfully added, later on we should add a UI Special Effect to notify users of that*/}
             {mediaUrl && mediaType === 'audio' && (
                 <ReactPlayer
                     url={mediaUrl}

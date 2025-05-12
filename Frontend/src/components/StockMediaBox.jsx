@@ -115,8 +115,8 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
         duration: 5,
       })
       .then((response) => {
-        console.log(response.data);
-        const mediaPath = '/' + response.data;
+        const mediaPath = `${baseURL}/${response.data}`;
+        console.log("Generated video URL:", mediaPath);
         dispatch(setPreviewerLoadingAction(false));
         dispatch(previewMediaAction(mediaPath));
         dispatch(setMediaTypeAction('video'));
@@ -133,6 +133,7 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
   };
 
   const addAudioToPreviewer = (audioUrl) => {
+    console.log(audioUrl);
     dispatch(previewMediaAction(audioUrl));
     dispatch(setMediaTypeAction('audio'));
   };
@@ -256,7 +257,7 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
               controls
               className="stockVideos"
               onClick={(e) => addVideoToPreviewer(e, video.video_files[0].link)}
-              onDoubleClick={(e) => e.preventDefault()}
+              onDoubleClick={(e) => e.preventDefault()} // not sure why using addVideoToPreviewer on double click will make e.preventDefault() not work
               config={{
                 file: {
                   attributes: {
