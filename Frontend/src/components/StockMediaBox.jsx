@@ -20,6 +20,7 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
 
   const [visibleGrid, setVisibleGrid] = useState('none');
   const [isLoading, setIsLoading] = useState(false);
+  const [clickedAudioId, setClickedAudioId] = useState(null);
 
   const baseURL = 'http://127.0.0.1:5001';
 
@@ -131,6 +132,19 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
     dispatch(setMediaTypeAction('video'));
   };
 
+  const addAudioToPreviewer = (audioUrl) => {
+    dispatch(previewMediaAction(audioUrl));
+    dispatch(setMediaTypeAction('audio'));
+  };
+
+  const handleAudioClick = (id) => {
+    setClickedAudioId(id);
+    // Clear the tooltip after 2 seconds
+    setTimeout(() => {
+      setClickedAudioId(null);
+    }, 2000);
+  };
+
   // Render appropriate search input based on mediaType
   const renderSearchInput = () => {
     switch (mediaType) {
@@ -177,7 +191,6 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
               type="text"
               value={soundtrackQuery}
               onChange={(e) => setSoundtrackQuery(e.target.value)}
-              onKeyPress={(e) => handleKeyPress(e, handleSongsButtonClick)}
               placeholder="Search for audio..."
             />
             <button className="button-4 search" onClick={handleSongsButtonClick}>
@@ -259,8 +272,23 @@ const StockMediaBox = ({ mediaType = 'image' }) => {
       <div className={visibleGrid === 'soundtrackGrid' ? 'soundtrackGrid' : 'hidden'}>
         {soundtracks.length > 0 && 
           soundtracks.map((soundtrack) => (
-            <div key={soundtrack.id} className="soundtrackItem">
-              <audio controls>
+            <div 
+              key={soundtrack.id} 
+              className="soundtrackItem"
+              onDoubleClick={() => addAudioToPreviewer(soundtrack.audio)}
+              onClick={() => handleAudioClick(soundtrack.id)}
+              style={{ cursor: 'pointer' }}
+              title="Double-click to add to timeline"
+              data-audio-url={soundtrack.audio}
+            >
+              <div className="soundtrack-title">{soundtrack.name || 'Audio Track'}</div>
+              {clickedAudioId === soundtrack.id && (
+                <div className="audio-tooltip">Double-click to add to timeline</div>
+              )}
+              <audio 
+                controls
+                onClick={(e) => e.stopPropagation()}
+              >
                 <source src={soundtrack.audio} type="audio/mpeg" />
                 Your browser does not support the audio element.
               </audio>
